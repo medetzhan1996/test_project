@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load task_tracker_tags %}
+{% block content %}
+  <h3 style="display: inline;">Список задач </h3>
+  <a href="{% url 'task_tracker:task_create' %}" class="btn btn-success pull-right" style="float: right;">+ Добавить новую задачу</a><br><br>
+  
+  <table class="table table-bordered">
+    <tr>
+      <th>Название</th>
+      <th>Описание</th>
+      <th>Исполнитель</th>
+      <th>Наблюдатели</th>
+      <th>Статус</th>
+      <th>Время начала</th>
+      <th>Время завершения</th>
+      <th>Планируемое время завершения</th>
+      <th>Чек лист</th>
+    </tr>
+    {% for task in tasks %}
+      <tr>
+        <td>{{ task.title }}</td>
+        <td>{{ task.description }}</td>
+        <td>{{ task.performer.get_full_name }}</td>
+        <td>
+          {% for observer in task.observers.all %}
+            {{ observer.get_full_name }} <br>
+          {% endfor %}
+        </td>
+        <td>{{ task.get_status_display }}</td> 
+        <td>{{ task.start_datetime|date:'d.m.Y H:i' }}</td>
+        <td>{{ task.end_datetime|date:'d.m.Y H:i' }}</td>
+        <td>{{ task.planned_end_datetime|date:'d.m.Y H:i' }}</td>
+        <td>
+          {% for taskcheklist in task.taskcheklist_set.all %}
+            {{ taskcheklist.title }}
+            {% if taskcheklist.is_completed %}
+              [Выполнен]
+            {% else %}
+              [Не выполнен]
+            {% endif %}
+          {% empty %}
+            ----
+          {% endfor %}
+        </td>
+        <td>
+          {% is_expired task.end_datetime as is_expired %}
+          {% if is_expired %}
+              <span style="color: red;">Просрочена</span>
+          {% endif %}
+          <a href="{% url 'task_tracker:task_update' pk=task.id %}">Обновить</a>
+        </td>
+
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

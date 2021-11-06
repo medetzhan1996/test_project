@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<form method="POST" action="">
+	{% csrf_token %}
+	<h3 style="display: inline;">Добавить новую задачу </h3><br><br>
+	<div class="form-group">
+	    <label for="email">название:</label><br>
+	    {{ task_form.title }}
+	</div>
+	<div class="form-group">
+	    <label for="email">Описание:</label><br>
+	    {{ task_form.description }}
+	</div>
+	<div class="form-group">
+	    <label for="email">исполнитель:</label><br>
+	    {{ task_form.performer }}
+	</div>
+	<div class="form-group">
+	    <label for="email">наблюдатели:</label><br>
+	    {{ task_form.observers }}
+	</div>
+	<div class="form-group">
+	    <label for="email">статус:</label><br>
+	    {{ task_form.status }}
+	</div>
+	<div class="form-group">
+	    <label for="email">Дата и время начала:</label> <br>
+	    {{ task_form.start_date|attr:"type:date" }}
+		{{ task_form.start_time|attr:"type:time" }}
+	</div>
+	<div class="form-group">
+	    <label for="email">Дата и время завершения:</label> <br>
+	    {{ task_form.end_date|attr:"type:date" }}
+		{{ task_form.end_time|attr:"type:time" }}
+	</div>
+	<div class="form-group">
+	    <label for="email">планируемое дата и время завершения:</label> <br>
+	    {{ task_form.planned_end_date|attr:"type:date" }}
+	{{ task_form.planned_end_time|attr:"type:time" }}
+	</div><br>
+	<div class="form-group formset">
+		{{ task_checklist_formset.management_form }}
+	    <label for="email">Чек лист: </label> <button class="btn-sm btn-primary add-inline-form">+</button><br>
+	    <div class="formset-forms">
+            {% for task_checklist in task_checklist_formset %}
+              <div class="form-group formset-form">
+                {% for hidden in task_checklist.hidden_fields %}
+                  {{ hidden }}
+                {% endfor %}
+                {{ task_checklist.title }}
+                {{ task_checklist.is_completed }}
+                {{ task_checklist.DELETE }}
+              </div>
+            {% endfor %}
+          </div>
+          <div class="form-group empty-form d-none">
+              {{ task_checklist_formset.empty_form.title }}
+              {{ task_checklist_formset.empty_form.is_completed }}
+              {{ task_checklist_formset.empty_form.DELETE }}
+            </div>
+          </div>
+	</div><br>
+	<input type="submit" class="btn btn-success" name="" value="Сохранить"><br><br>
+</form>
+{% endblock %}
